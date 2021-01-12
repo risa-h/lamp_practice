@@ -7,12 +7,13 @@
 </head>
 <body>
   <?php 
+  // ログイン後のヘッダー表示
   include VIEW_PATH . 'templates/header_logined.php'; 
   ?>
 
   <div class="container">
     <h1>商品管理</h1>
-
+<!-- エラーメッセージ及び成功メッセージの表示 -->
     <?php include VIEW_PATH . 'templates/messages.php'; ?>
 
     <form 
@@ -47,7 +48,7 @@
       <input type="submit" value="商品追加" class="btn btn-primary">
     </form>
 
-
+<!-- データベースから取得した商品の数が０以上の場合 -->
     <?php if(count($items) > 0){ ?>
       <table class="table table-bordered text-center">
         <thead class="thead-light">
@@ -79,9 +80,11 @@
             <td>
 
               <form method="post" action="admin_change_status.php" class="operation">
+              <!-- 公開ステータスが１の場合 -->
                 <?php if(is_open($item) === true){ ?>
                   <input type="submit" value="公開 → 非公開" class="btn btn-secondary">
                   <input type="hidden" name="changes_to" value="close">
+              <!-- 公開ステータスが１ではない、非公開の場合 -->
                 <?php } else { ?>
                   <input type="submit" value="非公開 → 公開" class="btn btn-secondary">
                   <input type="hidden" name="changes_to" value="open">
@@ -99,6 +102,7 @@
           <?php } ?>
         </tbody>
       </table>
+<!-- データベースに登録されているitemが０の場合 -->
     <?php } else { ?>
       <p>商品はありません。</p>
     <?php } ?> 
