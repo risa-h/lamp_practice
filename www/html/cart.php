@@ -19,5 +19,7 @@ $user = get_login_user($db);
 $carts = get_user_carts($db, $user['user_id']);
 // カートの商品の合計金額を取得
 $total_price = sum_carts($carts);
+// トークンの生成
+$token = get_csrf_token();
 // Viewファイルの読み込み
 include_once VIEW_PATH . 'cart_view.php';

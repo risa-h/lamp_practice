@@ -12,6 +12,7 @@
         <li class="nav-item">
           <a class="nav-link" href="<?php print(h(LOGOUT_URL));?>">ログアウト</a>
         </li>
+        <!-- 管理者ユーザーの場合 -->
         <?php if(is_admin($user)){ ?>
           <li class="nav-item">
             <a class="nav-link" href="<?php print(h(ADMIN_URL));?>">管理</a>

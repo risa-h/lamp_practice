@@ -18,6 +18,15 @@ $user = get_login_user($db);
 if(is_admin($user) === false){
   redirect_to(LOGIN_URL);
 }
+// POSTメソッドで送られたtokenの値を取得
+$token = get_post('token');
+// トークンのチェック
+if (is_valid_csrf_token($token) === false) {
+  // 照会の結果、不正なアクセスである場合、ログイン画面へリダイレクト
+  redirect_to(LOGIN_URL);
+}
+// トークンの破棄
+unset($_SESSION["csrf_token"]);
 // POSTメソッドで送られたitem_id、chenges_toの値を取得
 $item_id = get_post('item_id');
 $changes_to = get_post('changes_to');
