@@ -1,3 +1,7 @@
+<?php
+  // クリックジャッキング対策
+  header('X-FRAME-OPTIONS: DENY');
+?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -11,7 +15,7 @@
 
   <div class="container">
     <?php include VIEW_PATH . 'templates/messages.php'; ?>
-
+    <!-- カートに商品が入っている場合 -->
     <?php if(count($carts) > 0){ ?>
       <table class="table table-bordered">
         <thead class="thead-light">
@@ -38,6 +42,7 @@
         </tbody>
       </table>
       <p class="text-right">合計金額: <?php print h(number_format($total_price)); ?>円</p>
+    <!-- カートに商品が入っていない場合 -->
     <?php } else { ?>
       <p>カートに商品はありません。</p>
     <?php } ?> 

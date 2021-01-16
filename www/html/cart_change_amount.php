@@ -15,14 +15,25 @@ if(is_logined() === false){
 $db = get_db_connect();
 // ユーザーIDの取得
 $user = get_login_user($db);
+// POSTメソッドで送られたtokenの値を取得
+$token = get_post('token');
+// トークンのチェック
+if (is_valid_csrf_token($token) === false) {
+  // 照会の結果、不正なアクセスである場合、ログイン画面へリダイレクト
+  redirect_to(LOGIN_URL);
+}
+// トークンの破棄
+unset($_SESSION["csrf_token"]);
 // POSTメソッドで送られてきたcart_id,amountの値を取得
 $cart_id = get_post('cart_id');
 $amount = get_post('amount');
-
+//　カートの在庫数の変更が出来た場合、
 if(update_cart_amount($db, $cart_id, $amount)){
+// セッションに成功メッセージを追加する
   set_message('購入数を更新しました。');
 } else {
+// セッションにエラーメッセージを追加する
   set_error('購入数の更新に失敗しました。');
 }
-
+// カート画面へリダイレクト
 redirect_to(CART_URL);

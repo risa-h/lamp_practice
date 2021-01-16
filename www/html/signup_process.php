@@ -9,6 +9,15 @@ session_start();
 if(is_logined() === true){
   redirect_to(HOME_URL);
 }
+// POSTメソッドで送られたtokenの値を取得
+$token = get_post('token');
+// トークンのチェック
+if (is_valid_csrf_token($token) === false) {
+  // 照会の結果、不正なアクセスである場合、ログイン画面へリダイレクト
+  redirect_to(LOGIN_URL);
+}
+// トークンの破棄
+unset($_SESSION["csrf_token"]);
 // POSTメソッドで送られてきたname,password,password_confimation(確認用)の値を取得
 $name = get_post('name');
 $password = get_post('password');

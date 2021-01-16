@@ -18,11 +18,21 @@ $user = get_login_user($db);
 if(is_admin($user) === false){
   redirect_to(LOGIN_URL);
 }
+// POSTメソッドで送られたtokenの値を取得
+$token = get_post('token');
+// トークンのチェック
+if (is_valid_csrf_token($token) === false) {
+  // 照会の結果、不正なアクセスである場合、ログイン画面へリダイレクト
+  redirect_to(LOGIN_URL);
+}
+// トークンの破棄
+unset($_SESSION["csrf_token"]);
 // POSTメソッドで送られてきたname,price,status,stockの値を取得
 $name = get_post('name');
 $price = get_post('price');
 $status = get_post('status');
 $stock = get_post('stock');
+
 // FILEメソッドで送られてきた値を取得
 $image = get_file('image');
 // 商品をデータベースに追加登録した場合
