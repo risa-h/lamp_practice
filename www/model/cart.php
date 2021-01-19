@@ -103,11 +103,15 @@ function delete_cart($db, $cart_id){
   return execute_query($db, $sql, $array);
 }
 
+// カート内商品の購入を実行する関数
 function purchase_carts($db, $carts){
+  // 購入可能か検証。検証の結果falseであれば、falseを返す
   if(validate_cart_purchase($carts) === false){
     return false;
   }
+  // 検証の結果、falseでなければ以下の処理が実行される
   foreach($carts as $cart){
+    // 商品在庫テーブルのupdate
     if(update_item_stock(
         $db, 
         $cart['item_id'], 
@@ -116,7 +120,8 @@ function purchase_carts($db, $carts){
       set_error($cart['name'] . 'の購入に失敗しました。');
     }
   }
-  
+
+  //　ユーザーのカートの中身を0にする
   delete_user_carts($db, $carts[0]['user_id']);
 }
 
@@ -140,7 +145,9 @@ function sum_carts($carts){
   return $total_price;
 }
 
+// カート内商品が購入可能か検証する関数
 function validate_cart_purchase($carts){
+  // カート内に商品が入っていない場合、falseを返す
   if(count($carts) === 0){
     set_error('カートに商品が入っていません。');
     return false;
@@ -159,3 +166,59 @@ function validate_cart_purchase($carts){
   return true;
 }
 
+// 履歴テーブルと明細テーブルへのデータ保存
+function insert_orders_details($db, $total_price, $user, $carts){
+  // トランザクション開始
+  $db->beginTransaction();
+  // 購入履歴テーブルへのデータ保存
+  if(insert_orders($db, $total_price, $user['user_id']) === false){
+    set_error('購入履歴の保存に失敗しました');
+    $db->rollback();
+    return false;
+  }
+    // 購入履歴テーブルへのデータ保存に成功した場合、注文番号を取得
+  $order_id = $db->lastInsertId();
+    // 購入明細テーブルへのデータ保存
+  if(insert_details($db, $order_id, $carts) === false){
+    set_error('購入詳細の保存に失敗しました');
+    $db->rollback();
+    return false;
+  }
+  $db->commit();
+  return true;
+}
+
+// 購入履歴テーブルへのデータ保存
+function insert_orders($db, $total_price, $user_id){
+  $sql = "
+    INSERT INTO
+      orders(
+        total_price,
+        user_id
+      )
+    VALUES(:total_price, :user_id)
+  ";
+  $array = array(':total_price' => $total_price, ':user_id' => $user_id);
+  return execute_query($db, $sql, $array);
+}
+
+// 購入明細テーブルへのデータ保存
+function insert_details($db, $order_id, $carts){
+  foreach($carts as $cart){
+    $sql = "
+      INSERT INTO
+        details(
+        order_id,
+        item_id,
+        price,
+        amount
+        )
+      VALUES(:order_id, :item_id, :price, :amount)
+    ";
+    $array = array(':order_id' => $order_id, ':item_id' => $cart['item_id'], ':price' => $cart['price'], ':amount' => $cart['amount']);
+    if(execute_query($db, $sql, $array) === false){
+      return false;
+    }
+  }
+  return true;
+}
