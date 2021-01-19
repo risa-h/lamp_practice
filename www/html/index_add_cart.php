@@ -15,6 +15,7 @@ if(is_logined() === false){
 $db = get_db_connect();
 // ユーザーIDの取得
 $user = get_login_user($db);
+
 // POSTメソッドで送られたtokenの値を取得
 $token = get_post('token');
 // トークンのチェック
@@ -24,8 +25,10 @@ if (is_valid_csrf_token($token) === false) {
 }
 // トークンの破棄
 unset($_SESSION["csrf_token"]);
+
 // POSTメソッドで送られてきたitem_idの値を取得
 $item_id = get_post('item_id');
+
 // カートに商品を追加できた場合
 if(add_cart($db,$user['user_id'], $item_id)){
   // セッションに成功メッセージを追加

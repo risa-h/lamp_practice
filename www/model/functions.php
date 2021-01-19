@@ -1,10 +1,12 @@
 <?php
 
+// 変数のデータ型と値を調べる関数
 function dd($var){
   var_dump($var);
   exit();
 }
 
+// 別ページへリダイレクトする関数
 function redirect_to($url){
   header('Location: ' . $url);
   exit;
