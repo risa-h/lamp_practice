@@ -17,7 +17,16 @@
   <div class="container">
     <h1>商品一覧</h1>
     <?php include VIEW_PATH . 'templates/messages.php'; ?>
-
+    <div class="sort-menu">
+      <form method="get" action="index_sort.php">
+        <select name="sort">
+          <option value="1" <?php if($sort === '1'){print h('selected'); } ?>>新着順</option>
+          <option value="2" <?php if($sort === '2'){print h('selected'); } ?>>価格の安い順</option>
+          <option value="3" <?php if($sort === '3'){print h('selected'); } ?>>価格の高い順</option>
+        </select>
+        <input type="submit" value="並び替え">
+      </form>
+    </div>
     <div class="card-deck">
       <div class="row">
       <?php foreach($items as $item){ ?>
